@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Bar chart, extended with more values</title>
+		<script type="text/javascript" src="d3.js"></script>
+		<style type="text/css">
+		
+        rect:hover {
+				fill:blue;
+			}
+
+		</style>
+	</head>
+	<body>
+
+
+<svg width="500" height="500"></svg>
+
+<script>
+// set data
+var data = [
+  {name: "MS: C", value: 69.7},
+  {name: "MS: N", value: 64.1},
+  {name: "WS: C", value: 74.4},
+  {name: "WS: N", value: 64.5},
+  {name: "RS: C", value: 73.9},
+  {name: "WS: N", value: 64.5}];
+
+// set dimensions
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 500 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// create x scale
+var x = d3.scaleBand()
+    .domain(data.map(function(d) { return d.name; }))
+    .rangeRound([0, width])
+    .padding(0.1);
+
+// create y scale
+var y = d3.scaleLinear()
+    .domain([0, d3.max(data, function(d) { return d.value; })])
+    .range([height, 0]);
+
+// create x axis
+var xAxis = d3.axisBottom(x);
+
+// create y axis
+var yAxis = d3.axisLeft(y);
+
+// create svg
+var svg = d3.select("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// add x axis to svg
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+// add y axis to svg
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+// add bars to svg
+svg.selectAll(".bar")
+    .data(data)
+  .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d) { return x(d.name); })
+    .attr("y", function(d) { return y(d.value); })
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { return height - y(d.value); });
+    
+    
+// add interactivity
+svg.selectAll(".bar")
+  .on("mouseover", function(d) {
+    d3.select(this)
+      .attr("fill", "orange");
+  })
+  .on("mouseout", function(d) {
+    d3.select(this)
+      .attr("fill", "red");
+  });
+
+</script>
+	
+		</script>
+	</body>
+</html>
